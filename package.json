@@ -1,0 +1,30 @@
+{
+  "name": "old-bessie",
+  "version": "1.0.0",
+  "description": "\"Good news!\" 2D game designed as per Mintbean's hackathon hiring event: fend off enemies as you traverse space picking up packages along the way",
+  "main": "app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gitInLoserWereGoingShopping/old-bessie.git"
+  },
+  "keywords": [
+    "game",
+    "2D",
+    "bessie",
+    "hackathon",
+    "mintbean",
+    "phaser",
+    "typescript",
+    "javascript",
+    "webpack"
+  ],
+  "author": "Michael Palmer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gitInLoserWereGoingShopping/old-bessie/issues"
+  },
+  "homepage": "https://github.com/gitInLoserWereGoingShopping/old-bessie#readme"
+}
