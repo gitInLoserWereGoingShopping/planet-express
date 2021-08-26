@@ -7,10 +7,10 @@ export class Bessie {
   public bark(): string {
     let sound: string;
     if (this.shy) {
-      sound = "Yip";
+      sound = 'Yip';
     }
     else {
-      sound = "WOOF!";
+      sound = 'WOOF!';
     }
     return sound;
   }
