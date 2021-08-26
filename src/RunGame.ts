@@ -13,14 +13,16 @@ export class RunGame extends Phaser.Scene {
         );
         this.load.image('bender', '../assets/bender.png');
         this.load.image('candyPlanet', '../assets/candyPlanet.png');
+        this.load.image('nebula', '../assets/nebula.png');
     }
     protected create() {
         const width = this.scale.width
 	    const height = this.scale.height
         this.makeEnvironment();
+	    this.add.image(1100, 300, 'nebula');
+	    this.add.image(100, 850, 'bender');
         this.makePlayer();
         this.makePlanet();
-	    this.add.image(100, 850, 'bender')
         this.anims.create({
             key: 'player',
             frames: [ { key: 'player', frame: 0 } ],
@@ -48,11 +50,13 @@ export class RunGame extends Phaser.Scene {
         this.player.setCollideWorldBounds(true);
     }
     protected makePlanet(): void {
-        this.candyPlanet = this.physics.add.sprite(900, 200, 'candyPlanet');
-        this.candyPlanet.setBounceX(Phaser.Math.FloatBetween(0.1, 0.3));
-        this.candyPlanet.setBounceY(Phaser.Math.FloatBetween(0.3, 0.5));
-        this.candyPlanet.setCollideWorldBounds(true);
-        this.candyPlanet.setGravityY(50);
+        this.candyPlanet = this.physics.add.sprite(900, 200, 'candyPlanet')
+        .setBounceX(Phaser.Math.FloatBetween(0.1, 0.3))
+        .setBounceY(Phaser.Math.FloatBetween(0.3, 0.5))
+        .setCollideWorldBounds(true)
+        .setBounce(.5)
+        .setVelocity(100);
+        
     }
     protected timedEvent: any;
     protected flyingAnim()
@@ -72,12 +76,12 @@ export class RunGame extends Phaser.Scene {
         if (cursors.left.isDown)
         {
             this.player.setVelocityX(-500);
-            if (cam.scrollX < 20) cam.scrollX -= speed;
+            cam.scrollX -= speed;
         }
         else if (cursors.right.isDown)
         {
             this.player.setVelocityX(500);
-            if (cam.scrollX < 20) cam.scrollX += speed;
+            cam.scrollX += speed;
         }
         if (cursors.up.isDown)
         {
