@@ -50,6 +50,7 @@ export class RunGame extends Phaser.Scene {
     private keyA: any;
     private keyS: any;
     private keyD: any;
+    protected laserGroup: any;
     constructor() {
         super({ key: 'RunGame' });
         this.laserGroup;
