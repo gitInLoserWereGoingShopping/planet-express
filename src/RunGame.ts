@@ -11,7 +11,7 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
     }
     preUpdate(time: number, delta: number) {
         //reset laser group when laser reaches edge of screen
-        //without this the ship would only fire laser 30 times
+        //without this the ship would only fire laser 30 times (ln 29)
         super.preUpdate(time, delta);
         if (this.y <= 0) {
             this.setActive(false);
@@ -50,6 +50,8 @@ export class RunGame extends Phaser.Scene {
     private keyA: any;
     private keyS: any;
     private keyD: any;
+    private keySpacebar: any;
+    private keyEnter: any;
     protected laserGroup: any;
     constructor() {
         super({ key: 'RunGame' });
@@ -79,6 +81,8 @@ export class RunGame extends Phaser.Scene {
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.keySpacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         
         this.makeEnvironment();
 	    this.add.image(1100, 300, 'nebula');
@@ -102,10 +106,13 @@ export class RunGame extends Phaser.Scene {
         //     frames: this.anims.generateFrameNumbers('laser-beams-blue', { start: 0, end: 2 }),
         //     frameRate: 10
         // });
-        
-        //collisions
+        //collisions and overlaps
         this.physics.add.collider(this.ship, this.candyPlanet);
+        // this.physics.add.overlap(this.laserGroup, this.candyPlanet, this.removeLaser);
     }
+    // protected removeLaser(): void {
+    //     this.laserGroup.disableBody(true, true);
+    // }
     //allows for attaching movement of object to cursor
     // protected addEvents(): void {
     //     this.input.on('pointermove', pointer => {
@@ -123,8 +130,8 @@ export class RunGame extends Phaser.Scene {
     protected makeShip(): void {
         const centerX: number = this.cameras.main.width / 2;
         const bottom: number = this.cameras.main.height - 90;
-        this.ship = this.physics.add.sprite(centerX, bottom, 'ship');
-        this.ship.setCollideWorldBounds(true);
+        this.ship = this.physics.add.sprite(centerX, bottom, 'ship')
+        .setCollideWorldBounds(true);
     }
     protected makePlanet(): void {
         this.candyPlanet = this.physics.add.sprite(900, 200, 'candyPlanet')
@@ -135,33 +142,27 @@ export class RunGame extends Phaser.Scene {
         .setVelocity(100);
         
     }
-    
     protected flyingAnim()
     {
         this.ship.anims.play('ship', true);
     }
     protected shootLaser() {
-        
+        this.ship.anims.play('ship-fire', true);
+        this.timedEvent = this.time.addEvent({delay: 100, callback: this.flyingAnim, callbackScope: this});
+        this.laserGroup.fireLaser(this.ship.x, this.ship.y - 20);
     }
     protected pointerdown(pointer: Phaser.Input.Pointer) {
-        //start shooting
-        this.laserGroup.fireLaser(this.ship.x, this.ship.y - 20)
-        this.ship.anims.play('ship-fire', true);
-        // this.laser.anims.play('laser-beams-blue', true);
-        this.timedEvent = this.time.addEvent({delay: 100, callback: this.flyingAnim, callbackScope: this});
+        this.shootLaser();
     }
-    // protected pointerup(pointer: Phaser.Input.Pointer) {
-    //         this.ship.anims.play('ship-fire', true);
-    //         // this.laser.anims.play('laser-beams-blue', true);
-    //         this.timedEvent = this.time.addEvent({delay: 175, callback: this.flyingAnim, callbackScope: this});
-    // }
-    
     public update() {
         const cam = this.cameras.main;
 		const speed = 2;
         const cursors = this.input.keyboard.createCursorKeys();
         this.ship.setVelocityX(0);
         this.ship.setVelocityY(0);
+        if (Phaser.Input.Keyboard.JustDown(this.keySpacebar) || Phaser.Input.Keyboard.JustDown(this.keyEnter) ) {
+            this.shootLaser();
+        }
         if (cursors.left.isDown || this.keyA.isDown)
         {
             this.ship.setVelocityX(-500);
@@ -175,12 +176,10 @@ export class RunGame extends Phaser.Scene {
         if (cursors.up.isDown || this.keyW.isDown)
         {
             this.ship.setVelocityY(-500);
-            // cam.scrollY -= speed;
         }
         else if (cursors.down.isDown || this.keyS.isDown)
         {
             this.ship.setVelocityY(500);
-            // cam.scrollY += speed;
         }
     }
 }
