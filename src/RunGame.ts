@@ -127,7 +127,10 @@ export class RunGame extends Phaser.Scene {
         
         //collisions and overlaps
         this.physics.add.collider(this.ship, this.candyPlanet);
-        
+        this.physics.add.overlap(this.candyPlanet, this.laserGroup, this.removeLaser);
+    }
+    protected removeLaser(planet: any, laser: any): void {
+        laser.setVisible(false);
     }
     protected makeEnvironment(): void {
         this.background = this.add.image(0, 0, 'environment')
@@ -139,6 +142,8 @@ export class RunGame extends Phaser.Scene {
         const centerX: number = this.cameras.main.width / 2;
         const bottom: number = this.cameras.main.height - 90;
         this.ship = this.physics.add.sprite(centerX, bottom, 'ship')
+        .setBounce(1)
+        .setImmovable(true)
         .setCollideWorldBounds(true);
     }
     protected makePlanet(): void {
@@ -146,7 +151,7 @@ export class RunGame extends Phaser.Scene {
         .setBounceX(Phaser.Math.FloatBetween(0.1, 0.3))
         .setBounceY(Phaser.Math.FloatBetween(0.3, 0.5))
         .setCollideWorldBounds(true)
-        .setBounce(.5)
+        .setBounce(.6)
         .setVelocity(100);
     }
     protected flyingAnim()
