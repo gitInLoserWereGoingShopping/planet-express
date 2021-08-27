@@ -2,6 +2,10 @@ export class RunGame extends Phaser.Scene {
     protected player: Phaser.Physics.Arcade.Sprite;
     protected candyPlanet: Phaser.Physics.Arcade.Sprite;
     protected background: Phaser.GameObjects.Image;
+    private keyW: any;
+    private keyA: any;
+    private keyS: any;
+    private keyD: any;
     constructor() {
         super({ key: 'RunGame' });
     }
@@ -15,9 +19,15 @@ export class RunGame extends Phaser.Scene {
         this.load.image('candyPlanet', '../assets/candyPlanet.png');
         this.load.image('nebula', '../assets/nebula.png');
     }
+    
+    
     protected create() {
-        const width = this.scale.width
-	    const height = this.scale.height
+        // const width = this.scale.width
+	    // const height = this.scale.height
+        this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.makeEnvironment();
 	    this.add.image(1100, 300, 'nebula');
 	    this.add.image(100, 850, 'bender');
@@ -46,7 +56,6 @@ export class RunGame extends Phaser.Scene {
     }
     protected makePlayer(): void {
         this.player = this.physics.add.sprite(800, 800, 'player');
-        // .setOrigin(0.5, 0.5);
         this.player.setCollideWorldBounds(true);
     }
     protected makePlanet(): void {
@@ -66,29 +75,31 @@ export class RunGame extends Phaser.Scene {
     protected pointerup(pointer: Phaser.Input.Pointer) {
             this.player.anims.play('player-fire', true);
             this.timedEvent = this.time.addEvent({delay: 175, callback: this.flyingAnim, callbackScope: this});
-        }
-    protected update() {
+    }
+    
+    
+    public update() {
         const cam = this.cameras.main;
 		const speed = 2;
         const cursors = this.input.keyboard.createCursorKeys();
         this.player.setVelocityX(0);
         this.player.setVelocityY(0);
-        if (cursors.left.isDown)
+        if (cursors.left.isDown || this.keyA.isDown)
         {
             this.player.setVelocityX(-500);
             cam.scrollX -= speed;
         }
-        else if (cursors.right.isDown)
+        else if (cursors.right.isDown || this.keyD.isDown)
         {
             this.player.setVelocityX(500);
             cam.scrollX += speed;
         }
-        if (cursors.up.isDown)
+        if (cursors.up.isDown || this.keyW.isDown)
         {
             this.player.setVelocityY(-500);
             // cam.scrollY -= speed;
         }
-        else if (cursors.down.isDown)
+        else if (cursors.down.isDown || this.keyS.isDown)
         {
             this.player.setVelocityY(500);
             // cam.scrollY += speed;
