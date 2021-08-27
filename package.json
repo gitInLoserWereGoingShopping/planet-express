@@ -4,6 +4,7 @@
   "description": "\"Good news!\" 2D game designed as per Mintbean's hackathon hiring event: fend off enemies as you traverse space picking up packages along the way",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production",
     "build-dev": "webpack --mode development"
   },
   "repository": {
