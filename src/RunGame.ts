@@ -26,7 +26,7 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
         this.createMultiple({
         classType: Laser,
         frameQuantity: 30,
-        active: false,
+        active: true,
         visible: true,
         key: 'laser'
         })
@@ -42,7 +42,7 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
 
 export class RunGame extends Phaser.Scene {
     protected ship: Phaser.Physics.Arcade.Sprite;
-    protected candyPlanet: Phaser.Physics.Arcade.Sprite;
+    protected moon: Phaser.Physics.Arcade.Sprite;
     protected background: Phaser.GameObjects.Image;
     protected timedEvent: any;
     private keyW: any;
@@ -64,8 +64,11 @@ export class RunGame extends Phaser.Scene {
             { frameWidth: 40, frameHeight: 70 },
         );
         this.load.image('laser', '../assets/laser-blue.png');
+        this.load.image('ship-black', '../assets/ship-black.png');
+        this.load.image('ship-orange', '../assets/ship-orange.png');
+        this.load.image('ship-orange-large', '../assets/ship-orange-large.png');
         this.load.image('bender', '../assets/bender.png');
-        this.load.image('candyPlanet', '../assets/candyPlanet.png');
+        this.load.image('moon', '../assets/moon.png');
         this.load.image('nebula', '../assets/nebula.png');
         // this.load.spritesheet('laser-beams-blue', 
         //     '../assets/laser-beams-blue.png',
@@ -85,6 +88,9 @@ export class RunGame extends Phaser.Scene {
         this.makeEnvironment();
 	    this.add.image(1100, 300, 'nebula');
 	    this.add.image(100, 850, 'bender');
+	    this.add.image(400, 500, 'ship-black');
+	    this.add.image(500, 300, 'ship-orange');
+	    this.add.image(600, 100, 'ship-orange-large');
         this.laserGroup = new LaserGroup(this);
         
         this.makePlanet();
@@ -126,12 +132,12 @@ export class RunGame extends Phaser.Scene {
         });
         
         //collisions and overlaps
-        this.physics.add.collider(this.ship, this.candyPlanet);
-        this.physics.add.overlap(this.candyPlanet, this.laserGroup, this.removeLaser);
+        this.physics.add.collider(this.ship, this.moon);
+        this.physics.add.overlap(this.moon, this.laserGroup, this.removeObject);
     }
-    protected removeLaser(planet: any, laser: any): void {
-        laser.setActive(false);
-        laser.setVisible(false);
+    protected removeObject(objStaying: any, objRemoved: any): void {
+        objRemoved.setActive(false);
+        objRemoved.setVisible(false);
     }
     protected makeEnvironment(): void {
         this.background = this.add.image(0, 0, 'environment')
@@ -148,7 +154,7 @@ export class RunGame extends Phaser.Scene {
         .setCollideWorldBounds(true);
     }
     protected makePlanet(): void {
-        this.candyPlanet = this.physics.add.sprite(900, 200, 'candyPlanet')
+        this.moon = this.physics.add.sprite(900, 200, 'moon')
         .setBounceX(Phaser.Math.FloatBetween(0.1, 0.3))
         .setBounceY(Phaser.Math.FloatBetween(0.3, 0.5))
         .setCollideWorldBounds(true)
