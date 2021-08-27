@@ -28,11 +28,13 @@ export class RunGame extends Phaser.Scene {
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        
         this.makeEnvironment();
 	    this.add.image(1100, 300, 'nebula');
 	    this.add.image(100, 850, 'bender');
         this.makePlayer();
         this.makePlanet();
+        
         this.anims.create({
             key: 'player',
             frames: [ { key: 'player', frame: 0 } ],
