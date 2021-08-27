@@ -1,7 +1,6 @@
 class Laser extends Phaser.Physics.Arcade.Sprite {
     constructor(scene: any, x: number, y: number) {
         super(scene, x, y, 'laser');
-        
     }
     fire(x: number, y: number) {
         this.body.reset(x, y);
@@ -11,7 +10,7 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
     }
     preUpdate(time: number, delta: number) {
         //reset laser group when laser reaches edge of screen
-        //without this the ship would only fire laser 30 times (ln 29)
+        //without this the ship would only fire laser 30 times (ln 28)
         super.preUpdate(time, delta);
         if (this.y <= 0) {
             this.setActive(false);
@@ -59,24 +58,23 @@ export class RunGame extends Phaser.Scene {
     }
     protected preload() {
         this.load.image('environment', '../assets/background.jpg');
+        this.load.image('exhaust', '../assets/exhaust-white.png');
         this.load.spritesheet('ship',
             '../assets/bessie.png',
             { frameWidth: 40, frameHeight: 70 },
         );
+        this.load.image('laser', '../assets/laser-blue.png');
+        this.load.image('bender', '../assets/bender.png');
+        this.load.image('candyPlanet', '../assets/candyPlanet.png');
+        this.load.image('nebula', '../assets/nebula.png');
         // this.load.spritesheet('laser-beams-blue', 
         //     '../assets/laser-beams-blue.png',
         //     { frameWidth: 13, frameHeight: 26 }
         // );
-        this.load.image('laser', '../assets/laser-blue.png')
-        this.load.image('bender', '../assets/bender.png');
-        this.load.image('candyPlanet', '../assets/candyPlanet.png');
-        this.load.image('nebula', '../assets/nebula.png');
     }
     
     
     protected create() {
-        // const width = this.scale.width
-	    // const height = this.scale.height
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -88,9 +86,8 @@ export class RunGame extends Phaser.Scene {
 	    this.add.image(1100, 300, 'nebula');
 	    this.add.image(100, 850, 'bender');
         this.laserGroup = new LaserGroup(this);
-        this.makeShip();
+        
         this.makePlanet();
-        // this.addEvents();
         this.anims.create({
             key: 'ship',
             frames: [ { key: 'ship', frame: 0 } ],
@@ -101,31 +98,42 @@ export class RunGame extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('ship', { start: 0, end: 1 }),
             frameRate: 20
         });
+        
         // this.anims.create({
         //     key: 'laser-beams-blue',
         //     frames: this.anims.generateFrameNumbers('laser-beams-blue', { start: 0, end: 2 }),
         //     frameRate: 10
         // });
+        
+        //particles, emitters, exhaust
+        const particles = this.add.particles('exhaust');
+        this.makeShip();
+        particles.createEmitter({
+            quantity: 5,
+            speedY: { min: 20, max: 50 },
+            speedX: { min: -10, max: 10 },
+            accelerationY: 400,
+            lifespan: { min: 100, max: 300 },
+            alpha: { start: 0.5, end: 0, ease: 'Sine.easeIn' },
+            scale: { start: 0.065, end: 0.02 },
+            rotate: { min: -180, max: 180 },
+            angle: { min: 30, max: 110 },
+            blendMode: 'ADD',
+            frequency: 20,
+            follow: this.ship,
+            followOffset: { y: this.ship.height * 0.51 },
+            tint: 0x57708d,
+        });
+        
         //collisions and overlaps
         this.physics.add.collider(this.ship, this.candyPlanet);
-        // this.physics.add.overlap(this.laserGroup, this.candyPlanet, this.removeLaser);
+        
     }
-    // protected removeLaser(): void {
-    //     this.laserGroup.disableBody(true, true);
-    // }
-    //allows for attaching movement of object to cursor
-    // protected addEvents(): void {
-    //     this.input.on('pointermove', pointer => {
-    //         this.ship.x = pointer.x;
-    //         this.ship.y = pointer.y;
-    //     });
-    // }
     protected makeEnvironment(): void {
         this.background = this.add.image(0, 0, 'environment')
         .setOrigin(0, 0)
         .setInteractive();
         this.background.on('pointerdown', this.pointerdown, this);
-        
     }
     protected makeShip(): void {
         const centerX: number = this.cameras.main.width / 2;
@@ -140,7 +148,6 @@ export class RunGame extends Phaser.Scene {
         .setCollideWorldBounds(true)
         .setBounce(.5)
         .setVelocity(100);
-        
     }
     protected flyingAnim()
     {
