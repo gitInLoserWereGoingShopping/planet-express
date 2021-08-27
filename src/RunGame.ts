@@ -130,6 +130,7 @@ export class RunGame extends Phaser.Scene {
         this.physics.add.overlap(this.candyPlanet, this.laserGroup, this.removeLaser);
     }
     protected removeLaser(planet: any, laser: any): void {
+        laser.setActive(false);
         laser.setVisible(false);
     }
     protected makeEnvironment(): void {
