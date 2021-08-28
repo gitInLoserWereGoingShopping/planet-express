@@ -1,4 +1,5 @@
-class Laser extends Phaser.Physics.Arcade.Sprite {
+class Laser extends Phaser.Physics.Arcade.Sprite
+{
     constructor(scene: any, x: number, y: number) {
         super(scene, x, y, 'laser');
     }
@@ -19,7 +20,8 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
     }
 }
 
-class LaserGroup extends Phaser.Physics.Arcade.Group {
+class LaserGroup extends Phaser.Physics.Arcade.Group
+{
     constructor(scene: any) {
         super(scene.physics.world, scene);
         
@@ -40,7 +42,33 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
     }
 }
 
-export class RunGame extends Phaser.Scene {
+class Enemy extends Phaser.Physics.Arcade.Sprite
+{
+    constructor(scene: any, x: number, y: number)
+    {
+        super(scene, x, y, 'enemy')
+    }
+    Render()
+    {
+        
+    }
+    Update(frameTime: number)
+    {
+        
+    }
+    Destroyed()
+    {
+        
+    }
+    // float posX
+    // float posY
+    // float speed
+    // sprite laser
+    // sprite ship
+};
+
+export class RunGame extends Phaser.Scene
+{
     protected ship: Phaser.Physics.Arcade.Sprite;
     protected moon: Phaser.Physics.Arcade.Sprite;
     protected background: Phaser.GameObjects.Image;
@@ -52,11 +80,15 @@ export class RunGame extends Phaser.Scene {
     private keySpacebar: any;
     private keyEnter: any;
     protected laserGroup: any;
-    constructor() {
+    // protected enemyGroup: any;
+    constructor()
+    {
         super({ key: 'RunGame' });
         this.laserGroup;
+        // this.enemyGroup;
     }
-    protected preload() {
+    protected preload()
+    {
         this.load.image('environment', '../assets/background.jpg');
         this.load.image('exhaust', '../assets/exhaust-white.png');
         this.load.spritesheet('ship',
@@ -64,9 +96,10 @@ export class RunGame extends Phaser.Scene {
             { frameWidth: 40, frameHeight: 70 },
         );
         this.load.image('laser', '../assets/laser-blue.png');
-        this.load.image('ship-black', '../assets/ship-black.png');
-        this.load.image('ship-orange', '../assets/ship-orange.png');
-        this.load.image('ship-orange-large', '../assets/ship-orange-large.png');
+        this.load.image('enemySmall', '../assets/enemy-small.png');
+        this.load.image('enemyMedium', '../assets/enemy-medium.png');
+        this.load.image('enemyLarge', '../assets/enemy-large.png');
+        this.load.image('enemyBoss', '../assets/enemy-boss.png');
         this.load.image('bender', '../assets/bender.png');
         this.load.image('moon', '../assets/moon.png');
         this.load.image('nebula', '../assets/nebula.png');
@@ -77,7 +110,8 @@ export class RunGame extends Phaser.Scene {
     }
     
     
-    protected create() {
+    protected create()
+    {
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -88,10 +122,11 @@ export class RunGame extends Phaser.Scene {
         this.makeEnvironment();
 	    this.add.image(1100, 300, 'nebula');
 	    this.add.image(100, 850, 'bender');
-	    this.add.image(400, 500, 'ship-black');
-	    this.add.image(500, 300, 'ship-orange');
-	    this.add.image(600, 100, 'ship-orange-large');
+	    this.add.image(400, 500, 'enemySmall');
+	    this.add.image(500, 300, 'enemyMedium');
+	    this.add.image(600, 100, 'enemyLarge');
         this.laserGroup = new LaserGroup(this);
+        // this.enemyGroup = new EnemyGroup(this);
         
         this.makePlanet();
         this.anims.create({
@@ -104,6 +139,7 @@ export class RunGame extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('ship', { start: 0, end: 1 }),
             frameRate: 20
         });
+        // this.add.image(800, 300, 'enemyBoss'); *************************************************************
         
         // this.anims.create({
         //     key: 'laser-beams-blue',
@@ -134,18 +170,22 @@ export class RunGame extends Phaser.Scene {
         //collisions and overlaps
         this.physics.add.collider(this.ship, this.moon);
         this.physics.add.overlap(this.moon, this.laserGroup, this.removeObject);
+        // this.physics.add.overlap(this.moon, this.enemyGroup, this.removeObject);
     }
-    protected removeObject(objStaying: any, objRemoved: any): void {
+    protected removeObject(objStaying: any, objRemoved: any): void
+    {
         objRemoved.setActive(false);
         objRemoved.setVisible(false);
     }
-    protected makeEnvironment(): void {
+    protected makeEnvironment(): void
+    {
         this.background = this.add.image(0, 0, 'environment')
         .setOrigin(0, 0)
         .setInteractive();
         this.background.on('pointerdown', this.pointerdown, this);
     }
-    protected makeShip(): void {
+    protected makeShip(): void
+    {
         const centerX: number = this.cameras.main.width / 2;
         const bottom: number = this.cameras.main.height - 90;
         this.ship = this.physics.add.sprite(centerX, bottom, 'ship')
@@ -153,7 +193,8 @@ export class RunGame extends Phaser.Scene {
         .setImmovable(true)
         .setCollideWorldBounds(true);
     }
-    protected makePlanet(): void {
+    protected makePlanet(): void
+    {
         this.moon = this.physics.add.sprite(900, 200, 'moon')
         .setBounceX(Phaser.Math.FloatBetween(0.1, 0.3))
         .setBounceY(Phaser.Math.FloatBetween(0.3, 0.5))
@@ -165,40 +206,51 @@ export class RunGame extends Phaser.Scene {
     {
         this.ship.anims.play('ship', true);
     }
-    protected shootLaser() {
+    protected shootLaser()
+    {
         this.ship.anims.play('ship-fire', true);
         this.timedEvent = this.time.addEvent({delay: 100, callback: this.flyingAnim, callbackScope: this});
         this.laserGroup.fireLaser(this.ship.x, this.ship.y - 20);
     }
-    protected pointerdown(pointer: Phaser.Input.Pointer) {
+    protected pointerdown(pointer: Phaser.Input.Pointer)
+    {
         this.shootLaser();
     }
-    public update() {
+    public update()
+    {
         const cam = this.cameras.main;
-		const speed = 2;
+		const camSpeed = 2;
+        let shipSpeed = 500;
         const cursors = this.input.keyboard.createCursorKeys();
         this.ship.setVelocityX(0);
         this.ship.setVelocityY(0);
-        if (Phaser.Input.Keyboard.JustDown(this.keySpacebar) || Phaser.Input.Keyboard.JustDown(this.keyEnter) ) {
+        if (cursors.shift.isDown)
+        {
+            shipSpeed = 750;
+        } else {
+            shipSpeed = 500;
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.keySpacebar) || Phaser.Input.Keyboard.JustDown(this.keyEnter) )
+        {
             this.shootLaser();
         }
         if (cursors.left.isDown || this.keyA.isDown)
         {
-            this.ship.setVelocityX(-500);
-            cam.scrollX -= speed;
+            this.ship.setVelocityX(-shipSpeed);
+            cam.scrollX -= camSpeed;
         }
         else if (cursors.right.isDown || this.keyD.isDown)
         {
-            this.ship.setVelocityX(500);
-            cam.scrollX += speed;
+            this.ship.setVelocityX(shipSpeed);
+            cam.scrollX += camSpeed;
         }
         if (cursors.up.isDown || this.keyW.isDown)
         {
-            this.ship.setVelocityY(-500);
+            this.ship.setVelocityY(-shipSpeed);
         }
         else if (cursors.down.isDown || this.keyS.isDown)
         {
-            this.ship.setVelocityY(500);
+            this.ship.setVelocityY(shipSpeed);
         }
     }
 }
