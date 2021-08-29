@@ -111,6 +111,7 @@ export class RunGame extends Phaser.Scene
         this.load.image('enemyLarge', '../assets/enemy-large.png');
         this.load.image('enemyBoss', '../assets/enemy-boss.png');
         this.load.image('bender', '../assets/bender.png');
+        this.load.image('nibbler', '../assets/nibbler.png');
         this.load.image('moon', '../assets/moon.png');
         this.load.image('nebula', '../assets/nebula.png');
         // this.load.spritesheet('laser-beams-blue', 
@@ -133,6 +134,7 @@ export class RunGame extends Phaser.Scene
         this.makeEnvironment();
 	    this.add.image(1100, 300, 'nebula');
 	    this.add.image(100, 850, 'bender');
+	    this.add.image(1575, 875, 'nibbler');
 	    this.add.image(400, 500, 'enemySmall');
 	    this.add.image(600, 100, 'enemyLarge');
         this.laserGroup = new LaserGroup(this);
@@ -288,7 +290,7 @@ export class RunGame extends Phaser.Scene
     protected initText(): void {
         const mainCam = this.cameras.main;
         this.scoreText = this.add.text(150, mainCam.height - 60, `Score: ${this.data.get('score')}`);
-        this.livesText = this.add.text(mainCam.width - 100, mainCam.height - 40, `Lives: ${this.data.get('lives')}`);
         this.levelText = this.add.text(150, mainCam.height - 40, `Level: ${this.data.get('level')}`);
+        this.livesText = this.add.text(mainCam.width - 125, mainCam.height - 40, `Lives: ${this.data.get('lives')}`);
     }
 }
