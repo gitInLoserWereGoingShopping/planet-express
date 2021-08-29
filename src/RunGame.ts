@@ -73,22 +73,39 @@ export class RunGame extends Phaser.Scene
     moon: Phaser.Physics.Arcade.Sprite;
     background: Phaser.GameObjects.Image;
     laserGroup: LaserGroup;
+    
+    //crew members (collectables) and enemies
+    collectables: string[] = ['leela', 'fry', 'bender', 'professor', 'scruffy', 'kif', 'amy', 'hermes'];
+    collectableObjectsGroup: Phaser.Physics.Arcade.Group;
+    collectableTimedEvent: Phaser.Time.TimerEvent;
     enemySmall: Phaser.Physics.Arcade.Sprite;
     enemyLarge: Phaser.Physics.Arcade.Sprite;
     enemyBoss: Phaser.Physics.Arcade.Sprite;
+    enemySmallObjectsGroup: Phaser.Physics.Arcade.Group;
+    enemySmallTimedEvent: Phaser.Time.TimerEvent;
+    enemyLargeObjectsGroup: Phaser.Physics.Arcade.Group;
+    enemyLargeTimedEvent: Phaser.Time.TimerEvent;
+    playersHasShield: boolean = false;
+    
     height: number;
     width: number;
+    scaleRatio: number;
+    timedEvent: any;
+    
+    //game texts
     levelText: Phaser.GameObjects.Text;
     livesText: Phaser.GameObjects.Text;
     scoreText: Phaser.GameObjects.Text;
-    scaleRatio: number;
-    timedEvent: any;
+    
+    //keys
     keyW: any;
     keyA: any;
     keyS: any;
     keyD: any;
     keySpacebar: any;
     keyEnter: any;
+    
+    
     // enemyGroup: any;
     constructor()
     {
@@ -110,8 +127,16 @@ export class RunGame extends Phaser.Scene
         this.load.image('enemySmall', '../assets/enemy-small.png');
         this.load.image('enemyLarge', '../assets/enemy-large.png');
         this.load.image('enemyBoss', '../assets/enemy-boss.png');
-        this.load.image('bender', '../assets/bender.png');
+        this.load.image('bender-applause', '../assets/bender-applause.png');
         this.load.image('nibbler', '../assets/nibbler.png');
+        this.load.image('leela', '../assets/leela.png');
+        this.load.image('fry', '../assets/fry.png');
+        this.load.image('bender', '../assets/bender.png');
+        this.load.image('professor', '../assets/professor.png');
+        this.load.image('scruffy', '../assets/scruffy.png');
+        this.load.image('amy', '../assets/amy.png');
+        this.load.image('kif', '../assets/kif.png');
+        this.load.image('hermes', '../assets/hermes.png');
         this.load.image('moon', '../assets/moon.png');
         this.load.image('nebula', '../assets/nebula.png');
         // this.load.spritesheet('laser-beams-blue', 
@@ -132,9 +157,17 @@ export class RunGame extends Phaser.Scene
         this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         
         this.makeEnvironment();
-	    this.add.image(1100, 300, 'nebula');
-	    this.add.image(100, 850, 'bender');
+	    this.add.image(1120, 300, 'nebula');
+	    this.add.image(100, 850, 'bender-applause');
 	    this.add.image(1575, 875, 'nibbler');
+	    this.add.image(1300, 800, 'leela');
+	    this.add.image(1250, 800, 'fry');
+	    this.add.image(1200, 800, 'bender');
+	    this.add.image(1150, 800, 'professor');
+	    this.add.image(1100, 800, 'scruffy');
+	    this.add.image(1000, 800, 'amy');
+	    this.add.image(1050, 800, 'kif');
+	    this.add.image(950, 800, 'hermes');
 	    this.add.image(400, 500, 'enemySmall');
 	    this.add.image(600, 100, 'enemyLarge');
         this.laserGroup = new LaserGroup(this);
@@ -264,14 +297,14 @@ export class RunGame extends Phaser.Scene
         {
             this.ship.setVelocityX(-shipSpeed);
             this.ship.setRotation(-0.1);
-            cam.scrollX -= camSpeed;
+            // cam.scrollX -= camSpeed;
             
         }
         else if (cursors.right.isDown || this.keyD.isDown)
         {
             this.ship.setVelocityX(shipSpeed);
             this.ship.setRotation(0.1);
-            cam.scrollX += camSpeed;
+            // cam.scrollX += camSpeed;
         }
         if (cursors.up.isDown || this.keyW.isDown)
         {
