@@ -228,6 +228,7 @@ export class RunGame extends Phaser.Scene
         const cursors = this.input.keyboard.createCursorKeys();
         this.ship.setVelocityX(0);
         this.ship.setVelocityY(0);
+        this.ship.setRotation(0);
         if (cursors.shift.isDown)
         {
             shipSpeed = 750;
@@ -241,11 +242,14 @@ export class RunGame extends Phaser.Scene
         if (cursors.left.isDown || this.keyA.isDown)
         {
             this.ship.setVelocityX(-shipSpeed);
+            this.ship.setRotation(-0.1);
             cam.scrollX -= camSpeed;
+            
         }
         else if (cursors.right.isDown || this.keyD.isDown)
         {
             this.ship.setVelocityX(shipSpeed);
+            this.ship.setRotation(0.1);
             cam.scrollX += camSpeed;
         }
         if (cursors.up.isDown || this.keyW.isDown)
