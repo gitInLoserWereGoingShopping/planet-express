@@ -69,18 +69,22 @@ class Enemy extends Phaser.Physics.Arcade.Sprite
 
 export class RunGame extends Phaser.Scene
 {
-    protected ship: Phaser.Physics.Arcade.Sprite;
-    protected moon: Phaser.Physics.Arcade.Sprite;
-    protected background: Phaser.GameObjects.Image;
-    protected timedEvent: any;
-    private keyW: any;
-    private keyA: any;
-    private keyS: any;
-    private keyD: any;
-    private keySpacebar: any;
-    private keyEnter: any;
-    protected laserGroup: any;
-    // protected enemyGroup: any;
+    ship: Phaser.Physics.Arcade.Sprite;
+    moon: Phaser.Physics.Arcade.Sprite;
+    background: Phaser.GameObjects.Image;
+    enemySmall: Phaser.Physics.Arcade.Sprite;
+    enemyMedium:Phaser.Physics.Arcade.Sprite;
+    enemyLarge: Phaser.Physics.Arcade.Sprite;
+    enemyBoss: Phaser.Physics.Arcade.Sprite;
+    timedEvent: any;
+    laserGroup: LaserGroup;
+    keyW: any;
+    keyA: any;
+    keyS: any;
+    keyD: any;
+    keySpacebar: any;
+    keyEnter: any;
+    // enemyGroup: any;
     constructor()
     {
         super({ key: 'RunGame' });
@@ -128,7 +132,7 @@ export class RunGame extends Phaser.Scene
         this.laserGroup = new LaserGroup(this);
         // this.enemyGroup = new EnemyGroup(this);
         
-        this.makePlanet();
+        this.makeMoon();
         this.anims.create({
             key: 'ship',
             frames: [ { key: 'ship', frame: 0 } ],
@@ -193,7 +197,7 @@ export class RunGame extends Phaser.Scene
         .setImmovable(true)
         .setCollideWorldBounds(true);
     }
-    protected makePlanet(): void
+    protected makeMoon(): void
     {
         this.moon = this.physics.add.sprite(900, 200, 'moon')
         .setBounceX(Phaser.Math.FloatBetween(0.1, 0.3))
