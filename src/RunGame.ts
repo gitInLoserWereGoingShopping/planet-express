@@ -286,8 +286,9 @@ export class RunGame extends Phaser.Scene
         this.data.set('level', 1);
     }
     protected initText(): void {
-        this.scoreText = this.add.text(150, this.height - 60, `Score: ${this.data.get('score')}`);
-        this.livesText = this.add.text(this.width - 100, this.height - 40, `Lives: ${this.data.get('lives')}`);
-        this.levelText = this.add.text(150, this.height - 40, `Level: ${this.data.get('level')}`);
+        const mainCam = this.cameras.main;
+        this.scoreText = this.add.text(150, mainCam.height - 60, `Score: ${this.data.get('score')}`);
+        this.livesText = this.add.text(mainCam.width - 100, mainCam.height - 40, `Lives: ${this.data.get('lives')}`);
+        this.levelText = this.add.text(150, mainCam.height - 40, `Level: ${this.data.get('level')}`);
     }
 }
