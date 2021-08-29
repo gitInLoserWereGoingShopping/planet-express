@@ -72,12 +72,17 @@ export class RunGame extends Phaser.Scene
     ship: Phaser.Physics.Arcade.Sprite;
     moon: Phaser.Physics.Arcade.Sprite;
     background: Phaser.GameObjects.Image;
+    laserGroup: LaserGroup;
     enemySmall: Phaser.Physics.Arcade.Sprite;
-    enemyMedium:Phaser.Physics.Arcade.Sprite;
     enemyLarge: Phaser.Physics.Arcade.Sprite;
     enemyBoss: Phaser.Physics.Arcade.Sprite;
+    height: number;
+    width: number;
+    levelText: Phaser.GameObjects.Text;
+    livesText: Phaser.GameObjects.Text;
+    scoreText: Phaser.GameObjects.Text;
+    scaleRatio: number;
     timedEvent: any;
-    laserGroup: LaserGroup;
     keyW: any;
     keyA: any;
     keyS: any;
@@ -89,7 +94,9 @@ export class RunGame extends Phaser.Scene
     {
         super({ key: 'RunGame' });
         this.laserGroup;
-        // this.enemyGroup;
+        this.height = window.innerHeight;
+        this.width = window.innerWidth;
+        this.scaleRatio = window.devicePixelRatio;
     }
     protected preload()
     {
@@ -101,7 +108,6 @@ export class RunGame extends Phaser.Scene
         );
         this.load.image('laser', '../assets/laser-blue.png');
         this.load.image('enemySmall', '../assets/enemy-small.png');
-        this.load.image('enemyMedium', '../assets/enemy-medium.png');
         this.load.image('enemyLarge', '../assets/enemy-large.png');
         this.load.image('enemyBoss', '../assets/enemy-boss.png');
         this.load.image('bender', '../assets/bender.png');
@@ -116,6 +122,7 @@ export class RunGame extends Phaser.Scene
     
     protected create()
     {
+        
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -127,7 +134,6 @@ export class RunGame extends Phaser.Scene
 	    this.add.image(1100, 300, 'nebula');
 	    this.add.image(100, 850, 'bender');
 	    this.add.image(400, 500, 'enemySmall');
-	    this.add.image(500, 300, 'enemyMedium');
 	    this.add.image(600, 100, 'enemyLarge');
         this.laserGroup = new LaserGroup(this);
         // this.enemyGroup = new EnemyGroup(this);
@@ -170,6 +176,8 @@ export class RunGame extends Phaser.Scene
             followOffset: { y: this.ship.height * 0.51 },
             tint: 0x57708d,
         });
+        this.initData();
+        this.initText();
         
         //collisions and overlaps
         this.physics.add.collider(this.ship, this.moon);
@@ -222,8 +230,19 @@ export class RunGame extends Phaser.Scene
     }
     public update()
     {
+        if (this.data.get('lives') === 0) {
+            alert('Game over.');
+        }
+        this.handlePlayerUpdate();
+        this.scoreText.setText(`Score: ${this.data.get('score')}`);
+        this.livesText.setText(`Lives: ${this.data.get('lives')}`);
+        this.levelText.setText(`Level: ${this.data.get('level')}`);
+        
+    }
+    protected handlePlayerUpdate(): void
+    {
         const cam = this.cameras.main;
-		const camSpeed = 2;
+        const camSpeed = 2;
         let shipSpeed = 500;
         const cursors = this.input.keyboard.createCursorKeys();
         this.ship.setVelocityX(0);
@@ -260,5 +279,15 @@ export class RunGame extends Phaser.Scene
         {
             this.ship.setVelocityY(shipSpeed);
         }
+    }
+    protected initData(): void {
+        this.data.set('score', 0);
+        this.data.set('lives', 3);
+        this.data.set('level', 1);
+    }
+    protected initText(): void {
+        this.scoreText = this.add.text(150, this.height - 60, `Score: ${this.data.get('score')}`);
+        this.livesText = this.add.text(this.width - 100, this.height - 40, `Lives: ${this.data.get('lives')}`);
+        this.levelText = this.add.text(150, this.height - 40, `Level: ${this.data.get('level')}`);
     }
 }
