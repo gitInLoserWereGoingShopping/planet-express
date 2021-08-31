@@ -313,8 +313,9 @@ export class RunGame extends Phaser.Scene
     {
         if (this.data.get('lives') === 0)
         {
-            this.scene.stop();
+            console.log(`Good news everyone! You scored ${this.data.get('score')} points!`);
             alert(`Good news everyone! You scored ${this.data.get('score')} points!`);
+            this.scene.stop();
         }
         this.nebula.rotation += 0.001;
         this.scoreText.setText(`Score: ${this.data.get('score')}`);
@@ -456,7 +457,7 @@ export class RunGame extends Phaser.Scene
         enemy
         .setVelocityX(randomVelocity)
         .setVelocityY(160 * this.difficultyFactor)
-        .setCircle(enemy.height / 2);
+        .setSize(52, 50);
         randomVelocity > 0 ? enemy.setRotation(-0.05) : enemy.setRotation(0.05);
     }
     protected enemyLargeHitsLaser(laser: Phaser.Types.Physics.Arcade.GameObjectWithBody, enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
