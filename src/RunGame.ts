@@ -49,12 +49,62 @@ class LaserGroup extends Phaser.Physics.Arcade.Group
     }
 }
 
+class EnemyLaser extends Phaser.Physics.Arcade.Sprite
+{
+    constructor(scene: any, x: number, y: number)
+    {
+        super(scene, x, y, 'laser');
+    }
+    fire(x: number, y: number)
+    {
+        this.body.reset(x, y);
+        this.setActive(true);
+        this.setVisible(true);
+        this.setVelocityY(300);
+    }
+    preUpdate(time: number, delta: number)
+    {
+        //reset laser group when laser reaches edge of screen
+        //without this the ship would only fire laser 30 times
+        super.preUpdate(time, delta);
+        if (this.y <= 0) {
+            this.setActive(false);
+            this.setVisible(false);
+        }
+    }
+}
+
+class EnemyLaserGroup extends Phaser.Physics.Arcade.Group
+{
+    constructor(scene: any)
+    {
+        super(scene.physics.world, scene);
+        
+        this.createMultiple({
+            classType: EnemyLaser,
+            frameQuantity: 30,
+            active: true,
+            visible: true,
+            key: 'enemyLaser'
+        })
+    }
+    fireLaser(x: number, y: number)
+    {
+        //if no object available creates new object
+        const laser = this.getFirstDead(true);
+        if (laser) {
+            laser.fire(x, y)
+        }
+    }
+}
+
 export class RunGame extends Phaser.Scene
 {
     ship: Phaser.Physics.Arcade.Sprite;
     moon: Phaser.Physics.Arcade.Sprite;
     background: Phaser.GameObjects.Image;
     laserGroup: LaserGroup;
+    enemyLaserGroup: EnemyLaserGroup;
     
     //crew members (collectibles) and enemies
     collectibles: string[] = ['scruffy', 'zoidberg', 'leela', 'fry', 'bender', 'professor', 'kif', 'amy', 'hermes', 'nibbler'];
@@ -79,9 +129,9 @@ export class RunGame extends Phaser.Scene
     //game texts
     livesText: Phaser.GameObjects.Text;
     scoreText: Phaser.GameObjects.Text;
-    activeLasers: Phaser.GameObjects.Text;
+    // activeLasers: Phaser.GameObjects.Text;
     takedownsText: Phaser.GameObjects.Text;
-    activeEnemies: Phaser.GameObjects.Text;
+    // activeEnemies: Phaser.GameObjects.Text;
     
     //keys
     keyW: any;
@@ -110,6 +160,7 @@ export class RunGame extends Phaser.Scene
             { frameWidth: 40, frameHeight: 70 },
         );
         this.load.image('laser', '../assets/laser-blue.png');
+        this.load.image('enemyLaser', '../assets/laser-red.png');
         this.load.image('bender-applause', '../assets/bender-applause.png');
         this.load.image('enemySmall', '../assets/enemy-small.png');
         this.load.image('enemyLarge', '../assets/enemy-large.png');
@@ -118,6 +169,7 @@ export class RunGame extends Phaser.Scene
         {
             this.load.image(`${member}`,`../assets/${member}.png` )
         })
+        this.load.image('aura', '../assets/aura.png');
         this.load.image('moon', '../assets/moon.png');
         this.load.image('nebula', '../assets/nebula.png');
         // this.load.spritesheet('laser-beams-blue', 
@@ -125,8 +177,6 @@ export class RunGame extends Phaser.Scene
         //     { frameWidth: 13, frameHeight: 26 }
         // );
     }
-    
-    
     protected create()
     {
         
@@ -141,7 +191,8 @@ export class RunGame extends Phaser.Scene
 	    this.add.image(1120, 300, 'nebula');
 	    this.add.image(100, 850, 'bender-applause');
 	    this.add.image(1575, 875, 'nibbler');
-	    // this.add.image(1350, 850, 'zoidberg');
+        
+        // this.add.image(1350, 850, 'zoidberg');
 	    // this.add.image(1300, 850, 'leela');
 	    // this.add.image(1250, 850, 'fry');
 	    // this.add.image(1200, 850, 'bender');
@@ -150,20 +201,21 @@ export class RunGame extends Phaser.Scene
 	    // this.add.image(1000, 850, 'amy');
 	    // this.add.image(1050, 850, 'kif');
 	    // this.add.image(950, 850, 'hermes');
+        
         this.laserGroup = new LaserGroup(this);
         
         this.makeMoon();
+        
         this.anims.create({
             key: 'ship',
             frames: [ { key: 'ship', frame: 0 } ],
-            frameRate: 20
+            frameRate: 60
         });
         this.anims.create({
             key: 'ship-fire',
             frames: this.anims.generateFrameNumbers('ship', { start: 0, end: 1 }),
-            frameRate: 20
+            frameRate: 60
         });
-        // this.add.image(800, 300, 'enemyBoss'); *************************************************************
         
         // this.anims.create({
         //     key: 'laser-beams-blue',
@@ -251,20 +303,18 @@ export class RunGame extends Phaser.Scene
         if (this.data.get('lives') === 0)
         {
             this.scene.stop();
-            alert(`Game over, well done! You scored ${this.data.get('score')} points!`);
+            alert(`Good news everyone! You scored ${this.data.get('score')} points!`);
         }
         this.scoreText.setText(`Score: ${this.data.get('score')}`);
         this.livesText.setText(`Lives: ${this.data.get('lives')}`);
         this.takedownsText.setText(`Takedowns: ${this.takedowns}`);
-        this.activeEnemies.setText(`Enemies: ${this.enemySmallGroup.countActive()}`);
+        // this.activeEnemies.setText(`Enemies: ${this.enemySmallGroup.countActive()}`);
         // this.activeLasers.setText(`Lasers: ${this.laserGroup.countActive()}`);
         this.handlePlayerUpdate();
         
     }
     protected handlePlayerUpdate(): void
     {
-        const cam = this.cameras.main;
-        const camSpeed = 2;
         let shipSpeed = 500;
         const cursors = this.input.keyboard.createCursorKeys();
         this.ship.setVelocityX(0);
@@ -284,14 +334,12 @@ export class RunGame extends Phaser.Scene
         {
             this.ship.setVelocityX(-shipSpeed);
             this.ship.setRotation(-0.1);
-            // cam.scrollX -= camSpeed;
             
         }
         else if (cursors.right.isDown || this.keyD.isDown)
         {
             this.ship.setVelocityX(shipSpeed);
             this.ship.setRotation(0.1);
-            // cam.scrollX += camSpeed;
         }
         if (cursors.up.isDown || this.keyW.isDown)
         {
@@ -313,9 +361,9 @@ export class RunGame extends Phaser.Scene
     {
         const mainCam = this.cameras.main;
         this.scoreText = this.add.text(150, mainCam.height - 60, `Score: ${this.data.get('score')}`);
-        this.takedownsText = this.add.text(150, mainCam.height - 40, `Takedowns: ${this.data.get('takedowns')}`);
-        this.activeEnemies = this.add.text(150, mainCam.height - 20, `Enemies: ${this.data.get('enemies')}`);
+        this.takedownsText = this.add.text(150, mainCam.height - 30, `Takedowns: ${this.data.get('takedowns')}`);
         this.livesText = this.add.text(mainCam.width - 125, mainCam.height - 40, `Lives: ${this.data.get('lives')}`);
+        // this.activeEnemies = this.add.text(150, mainCam.height - 20, `Enemies: ${this.data.get('enemies')}`);
         // this.activeLasers = this.add.text(150, mainCam.height - 60, `Score: ${this.data.get('lasers')}`);
     }
     protected startGame(): void
@@ -328,7 +376,6 @@ export class RunGame extends Phaser.Scene
     {
         this.enemySmallGroup = this.physics.add.group({
             defaultKey: 'enemySmall',
-            collideWorldBounds: false
         })
         this.enemySmallTimedEvent = this.time.addEvent({
             delay: 700 / this.difficultyFactor,
@@ -342,22 +389,22 @@ export class RunGame extends Phaser.Scene
     }
     protected createEnemySmall(): void
     {
-        const enemy = this.enemySmallGroup.create(this.cameras.main.width * Math.random() + Math.random(), 0);
+        const randomVelocity: number = Math.random() < 0.5 ? Math.floor(Math.random() * 100 + Math.random() * this.difficultyFactor) : Math.floor(Math.random() * 100 + Math.random() * this.difficultyFactor) * -1.0;
+        const enemy = this.enemySmallGroup.create(this.cameras.main.width * Math.random() + Math.random(), 50);
         enemy
-        .setVelocityX(Math.random() < 0.5 ? (Math.random() * 100 + Math.random()) * this.difficultyFactor : -((Math.random() * 100 + Math.random()) * this.difficultyFactor))
+        .setVelocityX(randomVelocity)
         .setVelocityY(150 * this.difficultyFactor)
-        .setCircle(enemy.width / 2);
+        .setCircle(enemy.height / 2)
+        randomVelocity > 0 ? enemy.setRotation(-0.05) : enemy.setRotation(0.05);
     }
     protected enemySmallHitsLaser(laser: Phaser.Types.Physics.Arcade.GameObjectWithBody, enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
     {
-        //TO DO: enemy ship explosion animation
         this.increaseScoreBy(5);
         this.enemySmallGroup.remove(enemy, true, true);
         this.laserGroup.remove(laser, true, true);
     }
     protected enemySmallHitsMoon(moon: Phaser.Types.Physics.Arcade.GameObjectWithBody, enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
     {
-        //TO DO: enemy ship explosion animation 
         this.increaseScoreBy(5);
         this.enemySmallGroup.remove(enemy, true, true);
     }
@@ -365,13 +412,10 @@ export class RunGame extends Phaser.Scene
     {
         if (this.shipHasShield)
         {
-            //TO DO: enemy ship explosion animation 
             this.increaseScoreBy(5);
             this.enemySmallGroup.remove(enemy, true, true);
         } else
         {
-            //TO DO: player's ship explosion animation
-            //TO DO: enemy ship explosion animation 
             this.reduceLives();
             this.enemySmallGroup.remove(enemy, true, true);
             this.activateShield();
@@ -395,16 +439,16 @@ export class RunGame extends Phaser.Scene
     }
     protected createEnemyLarge(): void
     {
-        const enemy = this.enemyLargeGroup.create(this.cameras.main.width * Math.random() + Math.random(), -50);
+        const randomVelocity: number = Math.random() < 0.5 ? Math.floor(Math.random() * 120 + Math.random() * this.difficultyFactor) : Math.floor(Math.random() * 100 + Math.random() * this.difficultyFactor) * -1.0;
+        const enemy = this.enemyLargeGroup.create(this.cameras.main.width * Math.random() + Math.random(), 0);
         enemy
-        .setVelocityX(Math.random() < 0.5 ? (Math.random() * 100 + Math.random()) * this.difficultyFactor : -((Math.random() * 100 + Math.random()) * this.difficultyFactor))
-        .setVelocityY(130 * this.difficultyFactor)
-        .setCircle(enemy.width / 2);
+        .setVelocityX(randomVelocity)
+        .setVelocityY(160 * this.difficultyFactor)
+        .setCircle(enemy.height / 2);
+        randomVelocity > 0 ? enemy.setRotation(-0.05) : enemy.setRotation(0.05);
     }
     protected enemyLargeHitsLaser(laser: Phaser.Types.Physics.Arcade.GameObjectWithBody, enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
     {
-        //TO DO: enemy ship explosion animation 
-        //TO DO: enemy ship explosion animation
         this.increaseScoreBy(15);
         this.enemyLargeGroup.remove(enemy, true, true);
         this.laserGroup.remove(laser, true, true);
@@ -412,20 +456,16 @@ export class RunGame extends Phaser.Scene
     protected enemyLargeHitsMoon(moon: Phaser.Types.Physics.Arcade.GameObjectWithBody, enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
     {
         this.increaseScoreBy(15);
-        //TO DO: enemy ship explosion animation 
         this.enemyLargeGroup.remove(enemy, true, true);
     }
     protected enemyLargeHitsShip(ship: Phaser.Types.Physics.Arcade.GameObjectWithBody, enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
     {
         if (this.shipHasShield)
         {
-            //TO DO: enemy ship explosion animation 
             this.increaseScoreBy(5);
             this.enemyLargeGroup.remove(enemy, true, true);
         } else
         {
-            //TO DO: player's ship explosion animation
-            //TO DO: enemy ship explosion animation 
             this.reduceLives();
             this.enemyLargeGroup.remove(enemy, true, true);
             this.activateShield();
@@ -459,16 +499,20 @@ export class RunGame extends Phaser.Scene
     }
     protected CollectibleHitsShip(ship: Phaser.Types.Physics.Arcade.GameObjectWithBody, collectible: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
     {
-        this.increaseScoreBy(100);
+        this.increaseScoreBy(300);
         this.collectiblesGroup.remove(collectible, true, true);
-        this.activateShield();
     }
     protected createCollectible(): void
     {
-        const collectible = this.collectiblesGroup.create(this.cameras.main.width * Math.random() + Math.random(), -100, this.collectibles.pop())
+        this.difficultyFactor += 0.3;
+        const randomX = this.cameras.main.width * Math.random() + Math.random();
+        const aura = this.collectiblesGroup
+        .create(randomX, -100, 'aura')
         .setVelocityY(50);
-        collectible.setCircle(collectible.width / 2);
-        this.difficultyFactor += 0.2;
+        aura.body.setSize(50, 55, 41, 20);
+        const collectible = this.collectiblesGroup
+        .create(randomX, -100, this.collectibles.pop())
+        .setVelocityY(50);
     }
     private increaseScoreBy(points: number): void
     {
