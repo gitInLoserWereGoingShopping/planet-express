@@ -372,10 +372,9 @@ export class RunGame extends Phaser.Scene
         {
             //TO DO: player's ship explosion animation
             //TO DO: enemy ship explosion animation 
-            this.shipHasShield = true;
-            setTimeout(() => { this.shipHasShield = false; }, 3000);
             this.reduceLives();
             this.enemySmallGroup.remove(enemy, true, true);
+            this.activateShield();
         }
     }
     protected initEnemyLargeSpawn(): void
@@ -428,10 +427,22 @@ export class RunGame extends Phaser.Scene
             //TO DO: player's ship explosion animation
             //TO DO: enemy ship explosion animation 
             this.reduceLives();
-            this.shipHasShield = true;
-            setTimeout(() => { this.shipHasShield = false; }, 3000);
             this.enemyLargeGroup.remove(enemy, true, true);
+            this.activateShield();
         }
+    }
+    protected activateShield(): void
+    {
+        this.shipHasShield = true;
+        this.ship.setTint(0x7E1F86);
+        setTimeout(() => this.ship.setTint(0xA14DA0), 2000);
+        setTimeout(() => this.ship.setTint(0x9D79BC), 3000);
+        setTimeout(() => this.ship.setTint(0x8CA0D7), 4000);
+        setTimeout(() =>
+        {
+            this.shipHasShield = false;
+            this.ship.clearTint();
+        }, 5000);
     }
     protected initCollectionSpawn(): void
     {
@@ -448,10 +459,9 @@ export class RunGame extends Phaser.Scene
     }
     protected CollectibleHitsShip(ship: Phaser.Types.Physics.Arcade.GameObjectWithBody, collectible: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
     {
-        this.shipHasShield = true;
-        setTimeout(() => { this.shipHasShield = false; }, 3000);
         this.increaseScoreBy(100);
         this.collectiblesGroup.remove(collectible, true, true);
+        this.activateShield();
     }
     protected createCollectible(): void
     {
