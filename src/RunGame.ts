@@ -328,12 +328,10 @@ export class RunGame extends Phaser.Scene
     {
         this.enemySmallGroup = this.physics.add.group({
             defaultKey: 'enemySmall',
-            collideWorldBounds: false,
-            velocityY: 150 * this.difficultyFactor,
-            velocityX: Math.random() < 0.5 ? (Math.random() * 200 + Math.random()) * this.difficultyFactor : -((Math.random() * 200 + Math.random()) * this.difficultyFactor)
+            collideWorldBounds: false
         })
         this.enemySmallTimedEvent = this.time.addEvent({
-            delay: 700 * this.difficultyFactor,
+            delay: 700 / this.difficultyFactor,
             callback: this.createEnemySmall,
             callbackScope: this,
             loop: true
@@ -345,7 +343,10 @@ export class RunGame extends Phaser.Scene
     protected createEnemySmall(): void
     {
         const enemy = this.enemySmallGroup.create(this.cameras.main.width * Math.random() + Math.random(), 0);
-        enemy.setCircle(enemy.width / 2);
+        enemy
+        .setVelocityX(Math.random() < 0.5 ? (Math.random() * 100 + Math.random()) * this.difficultyFactor : -((Math.random() * 100 + Math.random()) * this.difficultyFactor))
+        .setVelocityY(150 * this.difficultyFactor)
+        .setCircle(enemy.width / 2);
     }
     protected enemySmallHitsLaser(laser: Phaser.Types.Physics.Arcade.GameObjectWithBody, enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
     {
@@ -381,12 +382,10 @@ export class RunGame extends Phaser.Scene
     {
         this.enemyLargeGroup = this.physics.add.group({
             defaultKey: 'enemyLarge',
-            collideWorldBounds: false,
-            velocityY: 130 * this.difficultyFactor,
-            velocityX: Math.random() < 0.5 ? (Math.random() * 100 + Math.random()) * this.difficultyFactor : -((Math.random() * 100 + Math.random()) * this.difficultyFactor)
+            collideWorldBounds: false
         })
         this.enemyLargeTimedEvent = this.time.addEvent({
-            delay: 1000 * this.difficultyFactor,
+            delay: 1000 / this.difficultyFactor,
             callback: this.createEnemyLarge,
             callbackScope: this,
             loop: true
@@ -398,7 +397,10 @@ export class RunGame extends Phaser.Scene
     protected createEnemyLarge(): void
     {
         const enemy = this.enemyLargeGroup.create(this.cameras.main.width * Math.random() + Math.random(), -50);
-        enemy.setCircle(enemy.width / 2);
+        enemy
+        .setVelocityX(Math.random() < 0.5 ? (Math.random() * 100 + Math.random()) * this.difficultyFactor : -((Math.random() * 100 + Math.random()) * this.difficultyFactor))
+        .setVelocityY(130 * this.difficultyFactor)
+        .setCircle(enemy.width / 2);
     }
     protected enemyLargeHitsLaser(laser: Phaser.Types.Physics.Arcade.GameObjectWithBody, enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
     {
