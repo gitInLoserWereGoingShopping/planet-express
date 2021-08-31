@@ -107,7 +107,7 @@ export class RunGame extends Phaser.Scene
     enemyLaserGroup: EnemyLaserGroup;
     
     //crew members (collectibles) and enemies
-    collectibles: string[] = ['scruffy', 'zoidberg', 'leela', 'fry', 'bender', 'professor', 'kif', 'amy', 'hermes', 'nibbler'];
+    collectibles: string[] = ['scruffy', 'zoidberg', 'nibbler', 'leela', 'fry', 'bender', 'professor', 'amy', 'hermes', 'kif'];
     collectiblesGroup: Phaser.Physics.Arcade.Group;
     collectiblesTimedEvent: Phaser.Time.TimerEvent;
     enemySmall: Phaser.Physics.Arcade.Sprite;
