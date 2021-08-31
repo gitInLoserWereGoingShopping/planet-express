@@ -390,7 +390,7 @@ export class RunGame extends Phaser.Scene
             defaultKey: 'enemySmall',
         })
         this.enemySmallTimedEvent = this.time.addEvent({
-            delay: 700 / this.difficultyFactor,
+            delay: 500 / this.difficultyFactor,
             callback: this.createEnemySmall,
             callbackScope: this,
             loop: true
@@ -405,7 +405,7 @@ export class RunGame extends Phaser.Scene
         const enemy = this.enemySmallGroup.create(this.cameras.main.width * Math.random() + Math.random(), 50);
         enemy
         .setVelocityX(randomVelocity)
-        .setVelocityY(150 * this.difficultyFactor)
+        .setVelocityY((Math.random() + 0.5) * 175 * this.difficultyFactor)
         .setCircle(enemy.height / 2)
         randomVelocity > 0 ? enemy.setRotation(-0.05) : enemy.setRotation(0.05);
     }
@@ -440,7 +440,7 @@ export class RunGame extends Phaser.Scene
             collideWorldBounds: false
         })
         this.enemyLargeTimedEvent = this.time.addEvent({
-            delay: 1000 / this.difficultyFactor,
+            delay: 700 / this.difficultyFactor,
             callback: this.createEnemyLarge,
             callbackScope: this,
             loop: true
