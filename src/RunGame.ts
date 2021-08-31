@@ -53,7 +53,7 @@ class EnemyLaser extends Phaser.Physics.Arcade.Sprite
 {
     constructor(scene: any, x: number, y: number)
     {
-        super(scene, x, y, 'laser');
+        super(scene, x, y, 'enemyLaser');
     }
     fire(x: number, y: number)
     {
@@ -64,10 +64,8 @@ class EnemyLaser extends Phaser.Physics.Arcade.Sprite
     }
     preUpdate(time: number, delta: number)
     {
-        //reset laser group when laser reaches edge of screen
-        //without this the ship would only fire laser 30 times
         super.preUpdate(time, delta);
-        if (this.y <= 0) {
+        if (this.y >= 0) {
             this.setActive(false);
             this.setVisible(false);
         }
@@ -82,7 +80,7 @@ class EnemyLaserGroup extends Phaser.Physics.Arcade.Group
         
         this.createMultiple({
             classType: EnemyLaser,
-            frameQuantity: 30,
+            frameQuantity: 125,
             active: true,
             visible: true,
             key: 'enemyLaser'
@@ -100,9 +98,11 @@ class EnemyLaserGroup extends Phaser.Physics.Arcade.Group
 
 export class RunGame extends Phaser.Scene
 {
+    music: any;
     ship: Phaser.Physics.Arcade.Sprite;
     moon: Phaser.Physics.Arcade.Sprite;
     background: Phaser.GameObjects.Image;
+    nebula: Phaser.GameObjects.Image;
     laserGroup: LaserGroup;
     enemyLaserGroup: EnemyLaserGroup;
     
@@ -153,6 +153,11 @@ export class RunGame extends Phaser.Scene
     }
     protected preload()
     {
+        this.load.audio('backgroundMusic', [
+            '../assets/music.ogg',
+            '../assets/music.mp3',
+            '../assets/music.wav'
+        ]);
         this.load.image('environment', '../assets/background.jpg');
         this.load.image('exhaust', '../assets/exhaust-white.png');
         this.load.spritesheet('ship',
@@ -179,7 +184,6 @@ export class RunGame extends Phaser.Scene
     }
     protected create()
     {
-        
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -188,7 +192,10 @@ export class RunGame extends Phaser.Scene
         this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         
         this.makeEnvironment();
-	    this.add.image(1120, 300, 'nebula');
+        this.sound.pauseOnBlur = true;
+        this.music = this.sound.add('backgroundMusic', {loop: true});
+        this.music.play();
+        this.nebula = this.add.image(1120, 300, 'nebula');
 	    this.add.image(100, 850, 'bender-applause');
 	    this.add.image(1575, 875, 'nibbler');
         
@@ -294,6 +301,10 @@ export class RunGame extends Phaser.Scene
         this.timedEvent = this.time.addEvent({delay: 100, callback: this.flyingAnim, callbackScope: this});
         this.laserGroup.fireLaser(this.ship.x, this.ship.y - 20);
     }
+    protected shootEnemySmallLaser(x: number, y: number)
+    {
+        this.enemyLaserGroup.fireLaser(x, y + 20);
+    }
     protected pointerdown(pointer: Phaser.Input.Pointer)
     {
         this.shootLaser();
@@ -305,6 +316,7 @@ export class RunGame extends Phaser.Scene
             this.scene.stop();
             alert(`Good news everyone! You scored ${this.data.get('score')} points!`);
         }
+        this.nebula.rotation += 0.001;
         this.scoreText.setText(`Score: ${this.data.get('score')}`);
         this.livesText.setText(`Lives: ${this.data.get('lives')}`);
         this.takedownsText.setText(`Takedowns: ${this.takedowns}`);
