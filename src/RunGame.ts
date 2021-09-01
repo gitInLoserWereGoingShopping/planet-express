@@ -134,6 +134,7 @@ export class RunGame extends Phaser.Scene
 {
     music: any;
     laserSound: any;
+    collectibleSound: any;
     ship: Phaser.Physics.Arcade.Sprite;
     moon: Phaser.Physics.Arcade.Sprite;
     background: Phaser.GameObjects.Image;
@@ -194,7 +195,8 @@ export class RunGame extends Phaser.Scene
             '../assets/audio/jobbascript.mp3',
             // '../assets/audio/music.wav'
         ]);
-        this.load.audio('laserSound', '../assets/audio/laserSound.wav');
+        this.load.audio('collectibleSound', '../assets/audio/collectible.wav');
+        this.load.audio('laserSound', '../assets/audio/laser.wav');
         
         this.load.image('environment', '../assets/background.jpg');
         this.load.image('exhaust', '../assets/exhaust-white.png');
@@ -234,6 +236,8 @@ export class RunGame extends Phaser.Scene
         this.music = this.sound.add('backgroundMusic', {loop: true});
         this.music.play();
         this.laserSound = this.sound.add('laserSound');
+        this.collectibleSound = this.sound.add('collectibleSound');
+        
         this.nebula = this.add.image(1120, 300, 'nebula');
 	    this.add.image(100, 850, 'bender-applause');
 	    this.add.image(1575, 875, 'nibbler');
@@ -391,7 +395,8 @@ export class RunGame extends Phaser.Scene
         } 
         if (Phaser.Input.Keyboard.JustDown(this.keySpacebar) || Phaser.Input.Keyboard.JustDown(this.keyEnter) )
         {
-            this.shootLaser();
+            if (this.shipTripleFire) this.shootTripleLaser();
+            else this.shootLaser();
         }
         if (cursors.left.isDown || this.keyA.isDown)
         {
@@ -537,15 +542,15 @@ export class RunGame extends Phaser.Scene
     protected activateShield(): void
     {
         this.shipHasShield = true;
-        this.ship.setTint(0x7E1F86);
-        setTimeout(() => this.ship.setTint(0xA14DA0), 2000);
-        setTimeout(() => this.ship.setTint(0x9D79BC), 3000);
-        setTimeout(() => this.ship.setTint(0x8CA0D7), 4000);
+        this.ship.setTint(0xff0000);
+        setTimeout(() => this.ship.setTint(0xFF3D41), 2000);
+        setTimeout(() => this.ship.setTint(0xff8b8e), 3000);
         setTimeout(() =>
         {
             this.shipHasShield = false;
             this.ship.clearTint();
-        }, 5000);
+        }, 4000);
+        
     }
     protected initCollectionSpawn(): void
     {
@@ -562,13 +567,16 @@ export class RunGame extends Phaser.Scene
     }
     protected CollectibleHitsShip(ship: Phaser.Types.Physics.Arcade.GameObjectWithBody, collectible: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
     {
-        this.increaseScoreBy(300);
         this.collectiblesGroup.remove(collectible, true, true);
+        this.collectibleSound.play();
+        this.increaseScoreBy(300);
         this.shipTripleFire = true;
         setTimeout(() => this.shipTripleFire = false, 6000);
-        this.ship.setTint(0xff0000);
-        setTimeout(() => this.ship.setTint(0xFF3D41), 2000);
-        setTimeout(() => this.ship.setTint(0xff8b8e), 4000);
+        
+        this.ship.setTint(0x7E1F86);
+        setTimeout(() => this.ship.setTint(0xA14DA0), 1500);
+        setTimeout(() => this.ship.setTint(0x9D79BC), 3000);
+        setTimeout(() => this.ship.setTint(0x8CA0D7), 4500);
         setTimeout(() => this.ship.clearTint(), 6000);
     }
     protected createCollectible(): void
@@ -576,12 +584,12 @@ export class RunGame extends Phaser.Scene
         this.difficultyFactor += 0.3;
         const randomX = this.cameras.main.width * Math.random() + Math.random();
         const aura = this.collectiblesGroup
-        .create(randomX, -100, 'aura')
-        .setVelocityY(50);
+            .create(randomX, -100, 'aura')
+            .setVelocityY(50);
         aura.body.setSize(50, 55, 41, 20);
         const collectible = this.collectiblesGroup
-        .create(randomX, -100, this.collectibles.pop())
-        .setVelocityY(50);
+            .create(randomX, -100, this.collectibles.pop())
+            .setVelocityY(50);
     }
     private increaseScoreBy(points: number): void
     {
