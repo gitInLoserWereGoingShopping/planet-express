@@ -135,6 +135,7 @@ export class RunGame extends Phaser.Scene
     music: any;
     laserSound: any;
     collectibleSound: any;
+    collectibleCount: number = 0;
     ship: Phaser.Physics.Arcade.Sprite;
     moon: Phaser.Physics.Arcade.Sprite;
     background: Phaser.GameObjects.Image;
@@ -176,7 +177,7 @@ export class RunGame extends Phaser.Scene
     keyS: any;
     keyD: any;
     keySpacebar: any;
-    keyEnter: any;
+    // keyEnter: any;
     
     
     // enemyGroup: any;
@@ -229,7 +230,7 @@ export class RunGame extends Phaser.Scene
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keySpacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        // this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         
         this.makeEnvironment();
         this.sound.pauseOnBlur = true;
@@ -365,10 +366,10 @@ export class RunGame extends Phaser.Scene
     }
     public update()
     {
-        if (this.data.get('lives') === 0)
+        if (this.data.get('lives') === 0 || this.collectibleCount === 10)
         {
-            console.log(`Good news everyone! You scored ${this.data.get('score')} points!`);
-            alert(`Good news everyone! You scored ${this.data.get('score')} points!`);
+            console.log(`Good news everyone! You scored ${this.data.get('score')} points, tookdown ${this.data.get('takedowns')} enemies!`);
+            alert(`Good news everyone! You scored ${this.data.get('score')} points, tookdown ${this.data.get('takedowns')} enemies!`);
             this.scene.stop();
         }
         this.nebula.rotation += 0.001;
@@ -393,7 +394,7 @@ export class RunGame extends Phaser.Scene
         } else {
             shipSpeed = 500;
         } 
-        if (Phaser.Input.Keyboard.JustDown(this.keySpacebar) || Phaser.Input.Keyboard.JustDown(this.keyEnter) )
+        if (Phaser.Input.Keyboard.JustDown(this.keySpacebar))
         {
             if (this.shipTripleFire) this.shootTripleLaser();
             else this.shootLaser();
@@ -578,6 +579,11 @@ export class RunGame extends Phaser.Scene
         setTimeout(() => this.ship.setTint(0x9D79BC), 3000);
         setTimeout(() => this.ship.setTint(0x8CA0D7), 4500);
         setTimeout(() => this.ship.clearTint(), 6000);
+        
+        this.collectibleCount += 0.5;
+        // if (this.collectibleCount === 10) {
+        //     this.initBossFight();
+        // }
     }
     protected createCollectible(): void
     {
@@ -594,10 +600,21 @@ export class RunGame extends Phaser.Scene
     private increaseScoreBy(points: number): void
     {
         this.data.inc('score', points);
-        this.takedowns++;
+        this.takedowns += 1;
     }
     private reduceLives(): void
     {
         this.data.inc('lives', -1);
     }
+    // protected initBossFight(): void
+    // {
+        //boss music starts
+        //spawn boss
+            //moves left and right
+            //sprays triple laser shots out every few seconds
+        //health bar on boss (reduced each time ship laser collides with boss)
+        //when health bar is reduced to 0
+            //pause the game
+            //game winning pop up message with option to continue in survival mode gaining most points
+    // }
 }
