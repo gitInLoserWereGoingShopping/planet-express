@@ -13,6 +13,24 @@ class Laser extends Phaser.Physics.Arcade.Sprite
         this.setVisible(true);
         this.setVelocityY(-900);
     }
+    fire1(x: number, y: number)
+    {
+        this.body.reset(x, y);
+        this.setActive(true);
+        this.setVisible(true);
+        this.setVelocityY(-900);
+        this.setVelocityX(-100);
+        this.setRotation(-0.1);
+    }
+    fire2(x: number, y: number)
+    {
+        this.body.reset(x, y);
+        this.setActive(true);
+        this.setVisible(true);
+        this.setVelocityY(-900);
+        this.setVelocityX(100);
+        this.setRotation(0.1);
+    }
     preUpdate(time: number, delta: number)
     {
         //reset laser group when laser reaches edge of screen
@@ -45,6 +63,22 @@ class LaserGroup extends Phaser.Physics.Arcade.Group
         const laser = this.getFirstDead(true);
         if (laser) {
             laser.fire(x, y)
+        }
+    }
+    fireLaser1(x: number, y: number)
+    {
+        //if no object available creates new object
+        const laser = this.getFirstDead(true);
+        if (laser) {
+            laser.fire1(x, y)
+        }
+    }
+    fireLaser2(x: number, y: number)
+    {
+        //if no object available creates new object
+        const laser = this.getFirstDead(true);
+        if (laser) {
+            laser.fire2(x, y)
         }
     }
 }
@@ -119,6 +153,7 @@ export class RunGame extends Phaser.Scene
     // enemyBoss: Phaser.Physics.Arcade.Sprite;
     
     shipHasShield: boolean = false;
+    shipTripleFire: boolean = false;
     height: number;
     width: number;
     scaleRatio: number;
@@ -301,13 +336,22 @@ export class RunGame extends Phaser.Scene
         this.timedEvent = this.time.addEvent({delay: 100, callback: this.flyingAnim, callbackScope: this});
         this.laserGroup.fireLaser(this.ship.x, this.ship.y - 20);
     }
+    protected shootTripleLaser()
+    {
+        this.ship.anims.play('ship-fire', true);
+        this.timedEvent = this.time.addEvent({delay: 100, callback: this.flyingAnim, callbackScope: this});
+        this.laserGroup.fireLaser(this.ship.x, this.ship.y - 20);
+        this.laserGroup.fireLaser1(this.ship.x, this.ship.y - 20);
+        this.laserGroup.fireLaser2(this.ship.x, this.ship.y - 20);
+    }
     protected shootEnemySmallLaser(x: number, y: number)
     {
         this.enemyLaserGroup.fireLaser(x, y + 20);
     }
     protected pointerdown(pointer: Phaser.Input.Pointer)
     {
-        this.shootLaser();
+        if (this.shipTripleFire) this.shootTripleLaser();
+        else this.shootLaser();
     }
     public update()
     {
@@ -514,6 +558,12 @@ export class RunGame extends Phaser.Scene
     {
         this.increaseScoreBy(300);
         this.collectiblesGroup.remove(collectible, true, true);
+        this.shipTripleFire = true;
+        setTimeout(() => this.shipTripleFire = false, 6000);
+        this.ship.setTint(0xff0000);
+        setTimeout(() => this.ship.setTint(0xFF3D41), 2000);
+        setTimeout(() => this.ship.setTint(0xff8b8e), 4000);
+        setTimeout(() => this.ship.clearTint(), 6000);
     }
     protected createCollectible(): void
     {
