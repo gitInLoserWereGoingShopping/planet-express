@@ -133,6 +133,7 @@ class EnemyLaserGroup extends Phaser.Physics.Arcade.Group
 export class RunGame extends Phaser.Scene
 {
     music: any;
+    laserSound: any;
     ship: Phaser.Physics.Arcade.Sprite;
     moon: Phaser.Physics.Arcade.Sprite;
     background: Phaser.GameObjects.Image;
@@ -189,10 +190,12 @@ export class RunGame extends Phaser.Scene
     protected preload()
     {
         this.load.audio('backgroundMusic', [
-            // '../assets/music.ogg',
-            '../assets/jobbascript.mp3',
-            // '../assets/music.wav'
+            // '../assets/audio/music.ogg',
+            '../assets/audio/jobbascript.mp3',
+            // '../assets/audio/music.wav'
         ]);
+        this.load.audio('laserSound', '../assets/audio/laserSound.wav');
+        
         this.load.image('environment', '../assets/background.jpg');
         this.load.image('exhaust', '../assets/exhaust-white.png');
         this.load.spritesheet('ship',
@@ -230,6 +233,7 @@ export class RunGame extends Phaser.Scene
         this.sound.pauseOnBlur = true;
         this.music = this.sound.add('backgroundMusic', {loop: true});
         this.music.play();
+        this.laserSound = this.sound.add('laserSound');
         this.nebula = this.add.image(1120, 300, 'nebula');
 	    this.add.image(100, 850, 'bender-applause');
 	    this.add.image(1575, 875, 'nibbler');
@@ -332,12 +336,14 @@ export class RunGame extends Phaser.Scene
     }
     protected shootLaser()
     {
+        this.laserSound.play();
         this.ship.anims.play('ship-fire', true);
         this.timedEvent = this.time.addEvent({delay: 100, callback: this.flyingAnim, callbackScope: this});
         this.laserGroup.fireLaser(this.ship.x, this.ship.y - 20);
     }
     protected shootTripleLaser()
     {
+        this.laserSound.play();
         this.ship.anims.play('ship-fire', true);
         this.timedEvent = this.time.addEvent({delay: 100, callback: this.flyingAnim, callbackScope: this});
         this.laserGroup.fireLaser(this.ship.x, this.ship.y - 20);
