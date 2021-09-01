@@ -154,9 +154,9 @@ export class RunGame extends Phaser.Scene
     protected preload()
     {
         this.load.audio('backgroundMusic', [
-            '../assets/music.ogg',
-            '../assets/music.mp3',
-            '../assets/music.wav'
+            // '../assets/music.ogg',
+            '../assets/jobbascript.mp3',
+            // '../assets/music.wav'
         ]);
         this.load.image('environment', '../assets/background.jpg');
         this.load.image('exhaust', '../assets/exhaust-white.png');
