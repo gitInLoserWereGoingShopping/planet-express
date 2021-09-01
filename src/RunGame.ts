@@ -83,53 +83,6 @@ class LaserGroup extends Phaser.Physics.Arcade.Group
     }
 }
 
-class EnemyLaser extends Phaser.Physics.Arcade.Sprite
-{
-    constructor(scene: any, x: number, y: number)
-    {
-        super(scene, x, y, 'enemyLaser');
-    }
-    fire(x: number, y: number)
-    {
-        this.body.reset(x, y);
-        this.setActive(true);
-        this.setVisible(true);
-        this.setVelocityY(300);
-    }
-    preUpdate(time: number, delta: number)
-    {
-        super.preUpdate(time, delta);
-        if (this.y >= 0) {
-            this.setActive(false);
-            this.setVisible(false);
-        }
-    }
-}
-
-class EnemyLaserGroup extends Phaser.Physics.Arcade.Group
-{
-    constructor(scene: any)
-    {
-        super(scene.physics.world, scene);
-        
-        this.createMultiple({
-            classType: EnemyLaser,
-            frameQuantity: 125,
-            active: true,
-            visible: true,
-            key: 'enemyLaser'
-        })
-    }
-    fireLaser(x: number, y: number)
-    {
-        //if no object available creates new object
-        const laser = this.getFirstDead(true);
-        if (laser) {
-            laser.fire(x, y)
-        }
-    }
-}
-
 export class RunGame extends Phaser.Scene
 {
     music: any;
@@ -141,7 +94,6 @@ export class RunGame extends Phaser.Scene
     background: Phaser.GameObjects.Image;
     nebula: Phaser.GameObjects.Image;
     laserGroup: LaserGroup;
-    enemyLaserGroup: EnemyLaserGroup;
     
     //crew members (collectibles) and enemies
     collectibles: string[] = ['scruffy', 'zoidberg', 'nibbler', 'leela', 'fry', 'bender', 'professor', 'amy', 'hermes', 'kif'];
@@ -153,7 +105,6 @@ export class RunGame extends Phaser.Scene
     enemyLarge: Phaser.Physics.Arcade.Sprite;
     enemyLargeGroup: Phaser.Physics.Arcade.Group;
     enemyLargeTimedEvent: Phaser.Time.TimerEvent;
-    // enemyBoss: Phaser.Physics.Arcade.Sprite;
     
     shipHasShield: boolean = false;
     shipTripleFire: boolean = false;
@@ -167,8 +118,8 @@ export class RunGame extends Phaser.Scene
     //game texts
     livesText: Phaser.GameObjects.Text;
     scoreText: Phaser.GameObjects.Text;
-    // activeLasers: Phaser.GameObjects.Text;
     takedownsText: Phaser.GameObjects.Text;
+    // activeLasers: Phaser.GameObjects.Text;
     // activeEnemies: Phaser.GameObjects.Text;
     
     //keys
@@ -206,11 +157,10 @@ export class RunGame extends Phaser.Scene
             { frameWidth: 40, frameHeight: 70 },
         );
         this.load.image('laser', '../assets/laser-blue.png');
-        this.load.image('enemyLaser', '../assets/laser-red.png');
         this.load.image('bender-applause', '../assets/bender-applause.png');
         this.load.image('enemySmall', '../assets/enemy-small.png');
         this.load.image('enemyLarge', '../assets/enemy-large.png');
-        // this.load.image('enemyBoss', '../assets/enemy-boss.png');
+        
         this.collectibles.forEach(member =>
         {
             this.load.image(`${member}`,`../assets/${member}.png` )
@@ -218,10 +168,6 @@ export class RunGame extends Phaser.Scene
         this.load.image('aura', '../assets/aura.png');
         this.load.image('moon', '../assets/moon.png');
         this.load.image('nebula', '../assets/nebula.png');
-        // this.load.spritesheet('laser-beams-blue', 
-        //     '../assets/laser-beams-blue.png',
-        //     { frameWidth: 13, frameHeight: 26 }
-        // );
     }
     protected create()
     {
@@ -243,16 +189,6 @@ export class RunGame extends Phaser.Scene
 	    this.add.image(100, 850, 'bender-applause');
 	    this.add.image(1575, 875, 'nibbler');
         
-        // this.add.image(1350, 850, 'zoidberg');
-	    // this.add.image(1300, 850, 'leela');
-	    // this.add.image(1250, 850, 'fry');
-	    // this.add.image(1200, 850, 'bender');
-	    // this.add.image(1150, 850, 'professor');
-	    // this.add.image(1100, 850, 'scruffy');
-	    // this.add.image(1000, 850, 'amy');
-	    // this.add.image(1050, 850, 'kif');
-	    // this.add.image(950, 850, 'hermes');
-        
         this.laserGroup = new LaserGroup(this);
         
         this.makeMoon();
@@ -267,12 +203,6 @@ export class RunGame extends Phaser.Scene
             frames: this.anims.generateFrameNumbers('ship', { start: 0, end: 1 }),
             frameRate: 60
         });
-        
-        // this.anims.create({
-        //     key: 'laser-beams-blue',
-        //     frames: this.anims.generateFrameNumbers('laser-beams-blue', { start: 0, end: 2 }),
-        //     frameRate: 10
-        // });
         
         //particles, emitters, exhaust
         const particles = this.add.particles('exhaust');
@@ -355,10 +285,6 @@ export class RunGame extends Phaser.Scene
         this.laserGroup.fireLaser1(this.ship.x, this.ship.y - 20);
         this.laserGroup.fireLaser2(this.ship.x, this.ship.y - 20);
     }
-    protected shootEnemySmallLaser(x: number, y: number)
-    {
-        this.enemyLaserGroup.fireLaser(x, y + 20);
-    }
     protected pointerdown(pointer: Phaser.Input.Pointer)
     {
         if (this.shipTripleFire) this.shootTripleLaser();
@@ -366,10 +292,16 @@ export class RunGame extends Phaser.Scene
     }
     public update()
     {
-        if (this.data.get('lives') === 0 || this.collectibleCount === 10)
+        if (this.data.get('lives') === 0)
         {
-            console.log(`Good news everyone! You scored ${this.data.get('score')} points, tookdown ${this.data.get('takedowns')} enemies!`);
-            alert(`Good news everyone! You scored ${this.data.get('score')} points, tookdown ${this.data.get('takedowns')} enemies!`);
+            console.log(`To shreds you say?! You scored ${this.data.get('score')} points, tookdown ${this.data.get('takedowns')} enemies!`);
+            alert(`To shreds you say?! You scored ${this.data.get('score')} points, tookdown ${this.takedowns} enemies!`);
+            this.scene.stop();
+        }
+        if (this.collectibleCount === 10)
+        {
+            console.log(`Good news everyone! You collected all crew members! You scored ${this.data.get('score')} points, tookdown ${this.data.get('takedowns')} enemies!`);
+            alert(`Good news everyone! You collected all crew members! You scored ${this.data.get('score')} points, tookdown ${this.takedowns} enemies!`);
             this.scene.stop();
         }
         this.nebula.rotation += 0.001;
@@ -461,9 +393,9 @@ export class RunGame extends Phaser.Scene
         const randomVelocity: number = Math.random() < 0.5 ? Math.floor(Math.random() * 100 + Math.random() * this.difficultyFactor) : Math.floor(Math.random() * 100 + Math.random() * this.difficultyFactor) * -1.0;
         const enemy = this.enemySmallGroup.create(this.cameras.main.width * Math.random() + Math.random(), 50);
         enemy
-        .setVelocityX(randomVelocity)
-        .setVelocityY((Math.random() + 0.5) * 175 * this.difficultyFactor)
-        .setCircle(enemy.height / 2)
+            .setVelocityX(randomVelocity)
+            .setVelocityY((Math.random() + 0.5) * 175 * this.difficultyFactor)
+            .setCircle(enemy.height / 2)
         randomVelocity > 0 ? enemy.setRotation(-0.05) : enemy.setRotation(0.05);
     }
     protected enemySmallHitsLaser(laser: Phaser.Types.Physics.Arcade.GameObjectWithBody, enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
@@ -511,9 +443,9 @@ export class RunGame extends Phaser.Scene
         const randomVelocity: number = Math.random() < 0.5 ? Math.floor(Math.random() * 120 + Math.random() * this.difficultyFactor) : Math.floor(Math.random() * 100 + Math.random() * this.difficultyFactor) * -1.0;
         const enemy = this.enemyLargeGroup.create(this.cameras.main.width * Math.random() + Math.random(), 0);
         enemy
-        .setVelocityX(randomVelocity)
-        .setVelocityY(160 * this.difficultyFactor)
-        .setSize(52, 50);
+            .setVelocityX(randomVelocity)
+            .setVelocityY(160 * this.difficultyFactor)
+            .setSize(52, 50);
         randomVelocity > 0 ? enemy.setRotation(-0.05) : enemy.setRotation(0.05);
     }
     protected enemyLargeHitsLaser(laser: Phaser.Types.Physics.Arcade.GameObjectWithBody, enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody): void
@@ -570,7 +502,7 @@ export class RunGame extends Phaser.Scene
     {
         this.collectiblesGroup.remove(collectible, true, true);
         this.collectibleSound.play();
-        this.increaseScoreBy(300);
+        this.increaseScoreBy(150); //will be 300 for crew member + aura collected
         this.shipTripleFire = true;
         setTimeout(() => this.shipTripleFire = false, 6000);
         
@@ -580,10 +512,7 @@ export class RunGame extends Phaser.Scene
         setTimeout(() => this.ship.setTint(0x8CA0D7), 4500);
         setTimeout(() => this.ship.clearTint(), 6000);
         
-        this.collectibleCount += 0.5;
-        // if (this.collectibleCount === 10) {
-        //     this.initBossFight();
-        // }
+        this.collectibleCount += 0.5; //using .5 because the aura and crew member both trigger CollectibleHitsShip()
     }
     protected createCollectible(): void
     {
@@ -606,15 +535,4 @@ export class RunGame extends Phaser.Scene
     {
         this.data.inc('lives', -1);
     }
-    // protected initBossFight(): void
-    // {
-        //boss music starts
-        //spawn boss
-            //moves left and right
-            //sprays triple laser shots out every few seconds
-        //health bar on boss (reduced each time ship laser collides with boss)
-        //when health bar is reduced to 0
-            //pause the game
-            //game winning pop up message with option to continue in survival mode gaining most points
-    // }
 }
