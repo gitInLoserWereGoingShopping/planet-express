@@ -104,3 +104,6 @@ dist
 .tern-port
 
 miscSnippets.ts
+
+#css tailwind
+css/tailwind.css
