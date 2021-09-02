@@ -121,6 +121,7 @@ export class RunGame extends Phaser.Scene
     takedownsText: Phaser.GameObjects.Text;
     // activeLasers: Phaser.GameObjects.Text;
     // activeEnemies: Phaser.GameObjects.Text;
+    // username: any;
     
     //keys
     keyW: any;
@@ -166,9 +167,11 @@ export class RunGame extends Phaser.Scene
         this.load.image('aura', '../assets/aura.png');
         this.load.image('moon', '../assets/moon.png');
         this.load.image('nebula', '../assets/nebula.png');
+        
     }
     protected create()
     {
+        // this.username = prompt('Please enter desired name for highscore purposes!');
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -292,13 +295,13 @@ export class RunGame extends Phaser.Scene
     {
         if (this.data.get('lives') === 0)
         {
-            console.log(`To shreds you say?! You scored ${this.data.get('score')} points, tookdown ${this.data.get('takedowns')} enemies!`);
+            console.log(`To shreds you say?! You scored ${this.data.get('score')} points, tookdown ${this.takedowns} enemies!`);
             alert(`To shreds you say?! You scored ${this.data.get('score')} points, tookdown ${this.takedowns} enemies!`);
             this.scene.stop();
         }
         if (this.collectibleCount === 10)
         {
-            console.log(`Good news everyone! You collected all crew members! You scored ${this.data.get('score')} points, tookdown ${this.data.get('takedowns')} enemies!`);
+            console.log(`Good news everyone! You collected all crew members! You scored ${this.data.get('score')} points, tookdown ${this.takedowns} enemies!`);
             alert(`Good news everyone! You collected all crew members! You scored ${this.data.get('score')} points, tookdown ${this.takedowns} enemies!`);
             this.scene.stop();
         }
