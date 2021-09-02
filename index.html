@@ -5,20 +5,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" type="image/jpg" href="./assets/favicon.jpg"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <style> 
-        *{ Color : #fff; 
-        Background : #000;} 
-    </style>
+    <link href="/tailwind.css" rel="stylesheet">
     <title>Planet Express</title>
-    <script src="lib/phaser.min.js"></script>
-    <script src="dist/bundle.js"></script>
 </head>
 <body>
-    <div id='instructions'>
-        <!-- <p>WASD ☝️ 👈 👇 👉</p>
-        <p>Space || Click = 🔫 pew pew</p>
-        <p>Hold Shift = Boost</p>
-        <p>Take down enemies and gather crew members for points! Try using moon to your advantage</p> -->
+    <div>
+        <nav class="bg-gray-800">
+        <div class="bg-gradient-to-r from-green-400 via-blue-600 to-green-500 w-full mx-auto px-4 sm:px-6 lg:px-8 fixed">
+            <div class="flex items-center justify-between h-16">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                <img class="h-10 w-12" src="assets/planet-express.png" alt="Workflow">
+                </div>
+                <div class="md:block">
+                <div class="ml-10 flex items-baseline space-x-4">
+                    <a href="game.html" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page" title="To shreds you say?!" target="_blank" rel="noreferrer noopener">Play Game!</a>
+                    <a href="https://github.com/gitInLoserWereGoingShopping/planet-express" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" target="_blank" rel="noreferrer noopener" >Project Github</a>
+                    <a href="https://www.linkedin.com/in/get-palmer/" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" target="_blank" rel="noreferrer noopener" >Linkedin</a>
+                    <a href="#tutorial" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Tutorial</a>
+                    <a href="#engineer" class="text-gray-900 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Meet The Engineer</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <header class="bg-gradient-to-r from-green-400 via-blue-600 to-green-500 shadow rounded-1g "> 
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            </div>
+        </header>
+        <main>
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+            <div class="border-0 border-solid border-green-200 rounded-1g h-50">
+                <p class="text-center font-sans leading-relaxed mt-0 mb-4 text-green-100 ">
+                    "Good news everyone!"
+                </p>
+                <p class="text-center font-sans leading-relaxed mt-0 mb-4 text-green-100">
+                    I've designed a 2D futurama-infused space shooter as part of Mintbean's hackathon hiring event!
+                </p>
+                <div class="flex flex-wrap justify-center">
+                    <div class="w-6/12 sm:w-4/12 px-4">
+                        <img src="assets/tutorial/main.gif" alt="..." class="shadow-lg rounded max-w-full h-auto align-middle border-none" />
+                    </div>
+                </div>
+                <p class="text-center font-sans leading-relaxed mt-3 text-green-100">
+                    Fend off enemies as you traverse space picking up crew members along the way, score as many points as you can!
+                </p>
+                
+            </div>
+            </div>
+        </div>
+        <header class="bg-gradient-to-r from-green-400 via-blue-600 to-green-500 shadow" id="tutorial">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8" >
+                <h1 class="text-3xl font-bold text-gray-900">
+                Tutorial
+                </h1>
+            </div>
+        </header>
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <p class="text-center font-sans leading-relaxed mt-0 mb-4 text-green-100">
+                Use spacebar or click to fire!
+            </p>
+            <div class="flex flex-wrap justify-center">
+                <div class="w-6/12 sm:w-4/12 px-4">
+                    <img src="assets/tutorial/laser.gif" alt="..." class="shadow-lg rounded max-w-full h-auto align-middle border-none" />
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <p class="text-center font-sans leading-relaxed mt-0 mb-4 text-green-100">
+                Use the moon as a shield or smash it into enemies!
+            </p>
+            <div class="flex flex-wrap justify-center">
+                <div class="w-6/12 sm:w-4/12 px-4">
+                    <img src="assets/tutorial/moon.gif" alt="..." class="shadow-lg rounded max-w-full h-auto align-middle border-none" />
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <p class="text-center font-sans leading-relaxed mt-0 mb-4 text-green-100">
+                Collect all of your crew members to win! hint: Take advantage of the rapid fire power up!
+            </p>
+            <div class="flex flex-wrap justify-center">
+                <div class="w-6/12 sm:w-4/12 px-4">
+                    <img src="assets/tutorial/crew.gif" alt="..." class="shadow-lg rounded max-w-full h-auto align-middle border-none" />
+                </div>
+            </div>
+        </div>
+        <header class="bg-gradient-to-r from-green-400 via-blue-600 to-green-500 shadow" id="engineer">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold text-gray-900" >
+                Meet The Engineer
+                </h1>
+            </div>
+        </header>
+        <p class="text-center font-sans leading-relaxed mt-2 mb-2 text-green-100">
+            Thank you for taking the time to check my project out and I hope you enjoy the game!
+        </p>
+        <div class="max-w-7xl mx-auto py-4 sm:px-6 lg:px-8">
+            <div class="px-4 py-2 sm:px-0">
+            <div class="h-96">
+                <div class="flex flex-wrap justify-center">
+                    <div class="w-6/12 sm:w-4/12 px-4">
+                        <img src="https://bit.ly/3gVtwFl" class="shadow-lg rounded align-middle border-none object-scale-down h-96 w-full" />
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <p class="text-center font-sans leading-relaxed mt-1 mb-5 text-green-100">
+            Technologies used: Typescript, Tailwind CSS & HTML5, Phaser 3, Webpack
+        </p>
+        <p class="text-center font-sans leading-relaxed mt-1 mb-2 text-green-100">
+            This was my first project implementing Typescript and Tailwind CSS.<br>
+            I enjoyed the challenge of learning Phaser 3 within the weeklong hackathon event 😅!
+        </p>
+        <div class="flex flex-wrap justify-center py-5">
+            <div class="w-6/12 sm:w-4/12 px-4">
+                <img src="assets/tutorial/tech.png" alt="..." class="shadow-lg rounded max-w-full h-auto align-middle border-none" />
+            </div>
+        </div>
+        <p class="text-center font-sans leading-relaxed mt-1 mb-2 pb-5 text-green-100">
+            🎵 Special shoutout to William Stucky for creating the 8-bit background music 🎵 
+        </p>
+        </main>
     </div>
 </body>
 </html>
+
+
+
+

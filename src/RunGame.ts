@@ -143,9 +143,7 @@ export class RunGame extends Phaser.Scene
     protected preload()
     {
         this.load.audio('backgroundMusic', [
-            // '../assets/audio/music.ogg',
-            '../assets/audio/jobbascript.mp3',
-            // '../assets/audio/music.wav'
+            '../assets/audio/jobbascript.mp3'
         ]);
         this.load.audio('collectibleSound', '../assets/audio/collectible.wav');
         this.load.audio('laserSound', '../assets/audio/laser.wav');
@@ -226,7 +224,7 @@ export class RunGame extends Phaser.Scene
         this.initData();
         this.initText();
         
-        //collisions and overlaps
+        // laser and moon collisions / overlaps
         this.physics.add.collider(this.ship, this.moon);
         this.physics.add.overlap(this.moon, this.laserGroup, this.removeObject);
         

@@ -1,5 +1,5 @@
 {
-  "name": "old-bessie",
+  "name": "planet-express",
   "version": "1.0.0",
   "description": "\"Good news!\" 2D game designed as per Mintbean's hackathon hiring event: fend off enemies as you traverse space picking up packages along the way",
   "scripts": {
@@ -9,25 +9,27 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gitInLoserWereGoingShopping/old-bessie.git"
+    "url": "git+https://github.com/gitInLoserWereGoingShopping/planet-express.git"
   },
   "keywords": [
     "game",
     "2D",
-    "bessie",
+    "futurama",
+    "planet-express",
     "hackathon",
     "mintbean",
     "phaser",
     "typescript",
     "javascript",
-    "webpack"
+    "webpack",
+    "tailwind"
   ],
   "author": "Michael Palmer",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gitInLoserWereGoingShopping/old-bessie/issues"
+    "url": "https://github.com/gitInLoserWereGoingShopping/planet-express/issues"
   },
-  "homepage": "https://github.com/gitInLoserWereGoingShopping/old-bessie#readme",
+  "homepage": "https://github.com/gitInLoserWereGoingShopping/planet-express#readme",
   "devDependencies": {
     "ts-loader": "^9.2.5",
     "tslint": "^6.1.3",
@@ -36,6 +38,7 @@
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
-    "phaser": "^3.55.2"
+    "phaser": "^3.55.2",
+    "tailwindcss": "^2.2.9"
   }
 }
